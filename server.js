@@ -47,7 +47,7 @@ app.post('/next-event', function (req, res) {
              reply.text = 'No Meetups found in  :sleuth_or_spy: .\nMake sure the location you entered is correct and try again.:slightly_smiling_face:';
              return res.json(reply);
            }
-           reply.text = 'Hey '+userName+',\nThis is the list of following meetups.';
+           reply.text = 'Hey '+userName+',\nThis is the list of the envens.\nIf you want to go the event, click in the name of event and confirm the assistance in Meetup';
            events.forEach(event => {
              var status = (event.status != undefined) ? ('Status - '+event.status) : 'Status - visible only to Members';
              var date = new Date(event.time + event.utc_offset);
@@ -91,7 +91,7 @@ function getEvents(nameMeetup) {
       }
     };
 
-    console.log(options, ' opt');
+    console.log(options, ' options');
     request(options, function (error, response, body) {
       if (error) {
         console.log("error occured in getEvents as "+error);
