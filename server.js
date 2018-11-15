@@ -76,6 +76,38 @@ app.post('/next-event', function (req, res) {
   });
 
 /*
+* function to get the confirmation of event of meetup using meetup API
+*/
+function getConfirmation(nameMeetup, idEvent) {
+  var key = process.env.SECRET;
+  
+  return new Promise((resolve, reject) => {
+    var options = {
+      method: 'GET',
+      url: 'https://api.meetup.com/'+nameMeetup+'/events/'+idEvent+'/rsvps',
+      params: {
+        key: key,
+        urlname: nameMeetup,
+        event_id: idEvent
+      }
+    };
+
+    console.log(options, ' options');
+    request(options, function (error, response, body) {
+      if (error) {
+        console.log("error occured in getEvents as "+error);
+        reject('Erorr');
+      } else {
+        body = JSON.parse(body);
+        console.log(body.length);
+        resolve(body);
+      }
+    });
+
+  });
+}
+
+/*
 * function to get events of meetup using meetup API
 */
 function getEvents(nameMeetup) {
