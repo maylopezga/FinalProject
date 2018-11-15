@@ -6,28 +6,12 @@ var moment = require('moment');
 const http = require('http');
 
 var m = "";
-// request.post(
-//     'https://hooks.slack.com/services/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',
-//     { json: { key: 'value' } },
-//     function (error, response, body) {
-//         if (!error && response.statusCode == 200) {
-//             console.log(body, 'bbbbbbbbbbbbb')
-//         }
-//     }
-// );
 
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (request, response) => {
   response.sendStatus(200);
 });
-
-// curl -X POST -H 'Content-type: application/json' --data '{"text":"Hello, World!"}' 
-// https://hooks.slack.com/services/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
-
-  // app.post('https://hooks.slack.com/services/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', (req, res) => {
-  //   res.send("Hello World!");
-  // });
 
   // var myText = getNotification();
 
@@ -50,11 +34,9 @@ app.get("/", (request, response) => {
       console.log(body)
     })
     console.log('.....');
-//   // http.get(`http://${process.env.PROJECT_DOMAIN}.glitch.me/`); 
-}, 60000);
+  }, 60000);
 
 
-// setInterval(() => {
   app.post("/", function (req, res) {
     console.log('Hi');
     const reply = {};
@@ -99,7 +81,6 @@ app.get("/", (request, response) => {
     //        return res.json({text: 'Ops Occurred an error. Please try again'});
     //     });
   })
-// }, 1000);
 
 /*
 * /hello_mybot calls the meetupbot and response is a greeting along
