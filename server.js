@@ -20,25 +20,31 @@ app.get("/", (request, response) => {
   //   console.log('m2: ', event);
   // }, 8000)
               
-  setInterval(() => {
+  setInterval (async ()  => {
     console.log('This is');
-    event = getMessage();
+    const m = await getMessage();
     // const mytext = getNotification();
     // ll;;;;
+    let n = "The next event is <https://www.meetup.com/node_co/events/255628560/| Event - noviembre de graphQL workshop 3/3>"
+    // n = 'Hi'
+    console.log(m, '///////');
     request.post('https://hooks.slack.com/services/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', {
-      json: event
+      json:{ text: m }
+      kkk
     }, 
      
     (error, res, body) => {
+      // console.log(res.body, ' l  l ');
       if (error) {
         console.error(error)
+        
         return
       }
       console.log(`statusCode: ${res.statusCode}`)
       console.log(body)
     })
-    console.log('.....');
-  }, 60000);
+    console.log('r.....r');
+  }, 30000);
 
 
   app.post("/", function (req, res) {
@@ -152,24 +158,27 @@ app.post('/next-event', function (req, res) {
         });
   });
     
-async function getMessage() {
+ async function getMessage() {
   let reply = {};
   let attachment = {};
+  let temp = '';
   let myActualTime = moment();
   // actualTime = new Date(actualTime+ event.utc_offset);
   console.log(myActualTime);
-  event = await getEvents('node_co');
-  console.log(typeof event)
-  if (event.length === 0){
-    event = 'There are not events';
-  } else {
-    reply.text = 'The next event is...'
-    event.forEach(event => {
+  
+  try {
+    const ev = await getEvents('node_co');
+    console.log(ev);
+    if(ev.length == 0){
+             reply.text = 'No Meetups found in  :sleuth_or_spy: .\nMake sure the location you entered is correct and try again.:slightly_smiling_face:';
+             return 'mmmmmmm888';
+           }
+          ev.forEach(event => {
       const actualTime = new Date (myActualTime + event.utc_offset);
       console.log(actualTime);
       const dateEvent = new Date(event.time + event.utc_offset);
       console.log(dateEvent);
-      if (dateEvent > actualTime) {
+      if (dateEvent > actualTime && temp === '') {
         var status = (event.status != undefined) ? ('Status - '+event.status) : 'Status - visible only to Members';
         var venue = (event.venue != undefined) ? event.venue.address_1 : 'Only visible to members';
         console.log('Es mayor');
@@ -188,11 +197,86 @@ async function getMessage() {
         };
         reply.attachments = attachment;
         console.log(reply);
-        return reply;
+        temp = 'The next event is <'+event.link+'| Event - '+event.name+'>';
       }
     })
-    return 'There are not events';
+    return temp;
+  } catch (e) {
+    console.log('e');
   }
+  // console.log(typeof event)
+  // event.then(ev => {
+//            if(ev.length == 0){
+//              reply.text = 'No Meetups found in  :sleuth_or_spy: .\nMake sure the location you entered is correct and try again.:slightly_smiling_face:';
+//              return 'mmmmmmm888';
+//            }
+//           ev.forEach(event => {
+//       const actualTime = new Date (myActualTime + event.utc_offset);
+//       console.log(actualTime);
+//       const dateEvent = new Date(event.time + event.utc_offset);
+//       console.log(dateEvent);
+//       if (dateEvent > actualTime) {
+//         var status = (event.status != undefined) ? ('Status - '+event.status) : 'Status - visible only to Members';
+//         var venue = (event.venue != undefined) ? event.venue.address_1 : 'Only visible to members';
+//         console.log('Es mayor');
+//         console.log('Es mayor');
+//         attachment = {
+//          title: 'Group - '+event.group.name,
+//          text: '<'+event.link+'| Event - '+event.name+'>',
+//          author_name: status,
+//          title_link: 'https://www.meetup.com/'+event.group.urlname,
+//          color: "#764FA5",
+//          fields: [
+//            { "title": "Date", "value": dateEvent, "short": true },
+//            { "title": "Venue", "value": venue, "short": true },
+//            { "title": "RSVP Count", "value": event.yes_rsvp_count, "short": true }
+//           ]
+//         };
+//         reply.attachments = attachment;
+//         console.log(reply);
+//         return 'The next event is <'+event.link+'| Event - '+event.name+'>';
+//       }
+//     })
+
+//           })
+           
+//         .catch(e => {
+//            console.log("Occured an error in getEvent. " + e);
+//            return  'Ops Occurred an error. Please try again';
+//         });
+  // if (event.length === 0){
+  //   event = 'There are not events';
+  // } else {
+  //   reply.text = 'The next event is...'
+  //   event.forEach(event => {
+  //     const actualTime = new Date (myActualTime + event.utc_offset);
+  //     console.log(actualTime);
+  //     const dateEvent = new Date(event.time + event.utc_offset);
+  //     console.log(dateEvent);
+  //     if (dateEvent > actualTime) {
+  //       var status = (event.status != undefined) ? ('Status - '+event.status) : 'Status - visible only to Members';
+  //       var venue = (event.venue != undefined) ? event.venue.address_1 : 'Only visible to members';
+  //       console.log('Es mayor');
+  //       console.log('Es mayor');
+  //       attachment = {
+  //        title: 'Group - '+event.group.name,
+  //        text: '<'+event.link+'| Event - '+event.name+'>',
+  //        author_name: status,
+  //        title_link: 'https://www.meetup.com/'+event.group.urlname,
+  //        color: "#764FA5",
+  //        fields: [
+  //          { "title": "Date", "value": dateEvent, "short": true },
+  //          { "title": "Venue", "value": venue, "short": true },
+  //          { "title": "RSVP Count", "value": event.yes_rsvp_count, "short": true }
+  //         ]
+  //       };
+  //       reply.attachments = attachment;
+  //       console.log(reply);
+  //       return 'The next event is <'+event.link+'| Event - '+event.name+'>';
+  //     }
+  //   })
+    // return 'There are not events';
+  // }
   // console.log('....................................................................................', event );
   
  
@@ -292,7 +376,7 @@ function getNotifications() {
         } else {
           // body = JSON.parse(body);
           console.log('.;.;.; ', body.length, ' /// ', body);
-          m = body;
+          // m = body;
           resolve(body);
         }
       });
