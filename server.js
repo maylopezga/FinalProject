@@ -3,41 +3,59 @@ var app = express();
 var bodyParser = require('body-parser');
 var request = require('request');
 var moment = require('moment');
+var querystring = require('querystring');
 const http = require('http');
 
 var event = "";
+var id = '';
+var token = '';
+
+
+var form = {
+    user: id,
+    token: 'xoxp-27923301078-27973812067-477724603986-2aa191d5015ee585e7f498e042489ad8',
+};
+
+var ff = {
+  client_id: 27923301078.477555764915,
+  client_secret: 'be01b19f228f6309180ef01a7a40788d',
+  code: 'UvIXsDyodGCGLudoddcuRc9F',
+}
+var formData = querystring.stringify(form);
+var formData2 = querystring.stringify(ff);
 
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get("/", (request, response) => {
   response.sendStatus(200);
 });
-              
-setInterval (async ()  => {
-  console.log('This is');
-  const m = await getMessage();
-  console.log(m, '///////');
-  request.post('https://hooks.slack.com/services/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', {
-    json:{ text: m }
-    kkk
-  }, 
+
+/* Notification of the next event */
+// setInterval (async ()  => {
+//   const m = await getMessage();
+//   request.post('https://hooks.slack.com/services/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', {
+//     json:{ text: m }
+//     kkk
+//   }, 
   
-  (error, res, body) => {
-    if (error) {
-      console.error(error)
-      return
-    }
-    console.log(`statusCode: ${res.statusCode}`)
-    console.log(body)
-  })
-  console.log('r.....r');
-}, 30000);
+//   (error, res, body) => {
+//     if (error) {
+//       console.error(error)
+//       return
+//     }
+//     console.log(`statusCode: ${res.statusCode}`)
+//     console.log(body)
+//   })
+// }, 30000);
 
 /*
 * /hello_mybot calls the meetupbot and response is a greeting along
 */
 app.post('/meetupbot', function (req, res) {
   var userName = req.body.user_name;
+  id = req.body.user_id;
+  token = req.body.token;
+  console.log(req.body);
   var attachment=[];
   var reply = {};
   var nameMeetup = 'node_co';
@@ -52,6 +70,8 @@ app.post('/meetupbot', function (req, res) {
       }
     ]
   };
+  
+  getUserInfo();
   res.json(reply);
 });
 
@@ -98,7 +118,8 @@ app.post('/next-event', function (req, res) {
           return res.json({text: 'Ops Occurred an error. Please try again'});
         });
 });
-    
+
+/* Get the events and return de next event */
 async function getMessage() {
   let reply = {};
   let attachment = {};
@@ -175,10 +196,42 @@ function getEvents(nameMeetup) {
     });
 
   });
-  
-  // return m;
 }
 
+function getUserInfo() {
+  var key = process.env.SECRET;
+  
+  return new Promise((resolve, reject) => {
+    var options = {
+      method: 'POST',
+      url: 'https://slack.com/api/oauth.token',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: formData2,
+      // params: {
+      //   token: 'xoxp-27923301078-27973812067-481398567061-04c46bd33fa0c9b11b96b75395fe43f8',
+      //   user: id,
+      // }
+    };
+
+    console.log(options, ' options');
+    request(options, function (error, response, body) {
+      if (error) {
+        console.log("error occured in getEvents as "+error);
+        reject('Erorr');
+      } else {
+        console.log('dddd888998', body)
+        console.log(response.statusCode)
+        body = JSON.parse(body);
+        console.log(body.length);
+        resolve(body);
+      }
+    });
+    
+
+  });
+}
 /*
 // * function to get the notifications
 function getNotifications() {
