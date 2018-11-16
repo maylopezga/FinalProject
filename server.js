@@ -11,16 +11,6 @@ var id = '';
 var token = '';
 
 
-var form = {
-    user: id,
-    token: 'xoxp-27923301078-27973812067-477724603986-2aa191d5015ee585e7f498e042489ad8',
-};
-
-var ff = {
-  client_id: 27923301078.477555764915,
-  client_secret: 'be01b19f228f6309180ef01a7a40788d',
-  code: 'UvIXsDyodGCGLudoddcuRc9F',
-}
 var formData = querystring.stringify(form);
 var formData2 = querystring.stringify(ff);
 
